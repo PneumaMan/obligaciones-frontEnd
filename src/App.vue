@@ -46,4 +46,9 @@ export default {
 .navbar{
   background: #965204;
 }
+
+.btn-warning{
+  background: #965204 !important;
+  color: white;
+}
 </style>

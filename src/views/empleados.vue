@@ -5,7 +5,7 @@
         </div>
         <div class="row">
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary my-3" data-toggle="modal" data-target="#exampleModal">
+            <button type="button" class="btn btn-warning text-white my-3" data-toggle="modal" data-target="#exampleModal">
             Insertar datos
             </button>
 
@@ -29,8 +29,33 @@
                             <label for="exampleFormControlInput1">Documento de identidad </label>
                             <input type="text" class="form-control" id="exampleFormControlInput1" v-model="emp.documentoEmpleado">
                         </div>
+                        <div class="form-group">
+                            <label for="exampleFormControlInput1">Fecha de nacimiento </label>
+                            <input type="date" class="form-control" id="exampleFormControlInput1" v-model="emp.fechaNacimiento">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect1">Genero</label>
+                            <select class="form-control" id="exampleFormControlSelect1" v-model="emp.genero">
+                            <option>Maculino</option>
+                            <option>Femenino</option>
+                            <option>Prefiero no responder</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect1">Nivel de estudios</label>
+                            <select class="form-control" id="exampleFormControlSelect1" v-model="emp.nivelEstudio">
+                            <option>Primaria incompleta</option>
+                            <option>Secundaria incompleta</option>
+                            <option>Bachiller</option>
+                            <option>Pregrado</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleFormControlInput1">Rol que desempeña en la empresa </label>
+                            <input type="text" class="form-control" id="exampleFormControlInput1" v-model="emp.rolEmpresa">
+                        </div>
                    </form>
-                   <button class="btn btn-primary" @click.prevent="agregaruser() "  aria-label="Close">Guardar</button>
+                   <button class="btn btn-warning text-white" @click.prevent="agregaruser() "  aria-label="Close">Guardar</button>
                 </div>
                
                 </div>
@@ -43,6 +68,10 @@
                     <tr >
                     <th scope="col">Nombre</th>
                     <th scope="col">Documento</th>
+                    <th scope="col">Fecha de nacimiento</th>
+                    <th scope="col">Genero</th>
+                    <th scope="col">Nivel de estudio</th>
+                    <th scope="col">Rol en la empresa</th>
                     <th scope="col">Acciones</th>
                     </tr>
                 </thead>
@@ -50,6 +79,10 @@
                     <tr >
                         <th>{{empActivar.nombre}}</th>
                         <th>{{empActivar.documentoEmpleado}}</th>
+                        <th>{{empActivar.fechaNacimiento}}</th>
+                        <th>{{empActivar.genero}}</th>
+                        <th>{{empActivar.nivelEstudio}}</th>
+                        <th>{{empActivar.rolEmpresa}}</th>
 
                         <th>
                             <button type="button" class="btn btn-danger mx-2">Eliminar</button>
@@ -79,7 +112,7 @@
                             <input type="text" class="form-control" id="exampleFormControlInput1" v-model="empEditar.documentoEmpleado">
                         </div>
                    </form>
-                   <button class="btn btn-primary" @click.prevent="EditarUser(empEditar)"  aria-label="Close">Guardar</button>
+                   <button class="btn btn-warning text-white" @click.prevent="EditarUser(empEditar)"  aria-label="Close">Guardar</button>
                 </div> 
                 </div>
             </div>
@@ -96,19 +129,31 @@ export default {
             emp:{
                 nombre:'',
                 documentoEmpleado:'',
-                idUsuario: ''
+                idUsuario: '',
+                fechaNacimiento:'',
+                genero:'',
+                nivelEstudio:'',
+                rolEmpresa:'',
             },
             empActivar:{
                 id:0,
                 nombre:'',
                 documentoEmpleado:'',
-                idUsuario: ''
+                idUsuario: '',
+                fechaNacimiento:'',
+                genero:'',
+                nivelEstudio:'',
+                rolEmpresa:'',
             },
             empEditar:{
                 id:0,
                 nombre:'',
                 documentoEmpleado:'',
-                idUsuario: ''
+                idUsuario: '',
+                fechaNacimiento:'',
+                genero:'',
+                nivelEstudio:'',
+                rolEmpresa:'',
             }
 
         }
@@ -164,7 +209,7 @@ export default {
                         position: 'toast-top-end',
                             icon: 'error',
                             title: 'ocurrio un error!',
-                            text: err,
+                            text: 'solo se puede registrar un correo',
                         });
             });
         },
