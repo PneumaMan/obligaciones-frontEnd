@@ -18,7 +18,7 @@ import VueAxios from 'vue-axios'
 Vue.use(BootstrapVue)
 Vue.use(VueAxios, axios)
 
-const url = 'http://localhost:3000/api' 
+const url = 'https://deseo-obligacion.azurewebsites.net/api' 
 axios.defaults.baseURL = url 
 
 Vue.config.productionTip = false;
