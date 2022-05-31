@@ -8,13 +8,13 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" href="/" v-if="!logueado">login</a>
+              <router-link class="nav-link" :to="{ path: '/'}" v-if="!logueado">login</router-link>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/empleados" v-if="logueado">empleados</a>
+              <router-link class="nav-link" :to="{ path: '/empleados'}" v-if="logueado">empleados</router-link>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/obligaciones" v-if="logueado">Obligaciones</a>
+              <router-link class="nav-link" :to="{ path: '/obligaciones'}" v-if="logueado">Obligaciones</router-link>
             </li>
             <li class="nav-item">
               <a class="nav-link" v-if="logueado" @click="cerrarSesion" >Cerrar sesión</a>

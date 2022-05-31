@@ -33,7 +33,7 @@
                   <option>USUARIO</option>
                 </select>
               </div> -->
-            <button type="submit" class="btn btn-primary"  @click.prevent= login()>Iniciar</button>
+            <button type="submit" class="btn btn-primary"  @click.prevent= "login()">Iniciar</button>
           </form>
         </div>
       </div>
