@@ -48,7 +48,7 @@ export default {
 }
 
 .btn-warning{
-  background: #605e5e!important;
-  color: #965204 !important;
+  background: #965204!important;
+  /* color: #965204 !important; */
 }
 </style>
