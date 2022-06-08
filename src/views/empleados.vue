@@ -14,7 +14,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal empleado</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Insertar datos empleado</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -55,7 +55,7 @@
                             <input type="text" class="form-control" id="exampleFormControlInput1" v-model="emp.rolEmpresa">
                         </div>
                    </form>
-                   <button class="btn btn-warning text-white" @click.prevent="agregaruser() "  aria-label="Close">Guardar</button>
+                   <button class="btn btn-warning text-white" @click.prevent="agregaruser() " data-dismiss="modal">Guardar</button>
                 </div>
                
                 </div>
@@ -155,7 +155,6 @@ export default {
                 nivelEstudio:'',
                 rolEmpresa:'',
             }
-
         }
     },
     mounted() {
@@ -175,7 +174,7 @@ export default {
             this.$swal({
                         position: 'toast-top-end',
                             icon: 'success',
-                            title: 'Guardado con exito!',
+                            title: 'Guardado con éxito!',
                         });
             })
             .catch((err) => {
@@ -185,7 +184,7 @@ export default {
                         position: 'toast-top-end',
                             icon: 'error',
                             title: 'OCURIO UN ERROR!',
-                            text: err,
+                            text: 'solo puede insertar los datos un empleado',
                         });
             
             }); 

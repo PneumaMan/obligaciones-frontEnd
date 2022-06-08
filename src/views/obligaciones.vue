@@ -26,7 +26,7 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Planificar Mes</h5>
               <button
                 type="button"
                 class="close"
@@ -43,16 +43,12 @@
                   <select
                     class="form-control"
                     id="exampleFormControlSelect2"
-                    v-model="plan.idObligacion"
-                  >
-                    <option
-                      v-for="(item, index) in obligaciones"
-                      :key="index"
-                      :value="item.id"
-                    >
+                    v-model="plan.idObligacion" @click.prevent="cargarValor(plan.idObligacion)">
+                    <option v-for="(item, index) in obligaciones" :key="index" :value="item.id" >
                       {{ item.nombreObligacion }}
                     </option>
                   </select>
+                    <small  class="form-text text-muted"> el valor de la obligacion es: {{ valor }}</small>
                 </div>
                 <div class="form-group">
                   <label for="">Cubrir obligacion</label>
@@ -60,11 +56,13 @@
                     class="form-control"
                     id="exampleFormControlSelect2"
                     v-model="plan.CubrirObligacion"
-                    @click.prevent="PagoParcial()"
+                    @click.prevent="PagoParcial(plan.idObligacion)"
                   >
-                    <option>Total</option>
+                    <option>Total cuota</option>
                     <option>Parcial</option>
+                    <option>Pago Completo</option>
                   </select>
+                  <small  class="form-text text-muted" v-if="saldo == true"> Su saldo restante es de: {{ saldoRestante }}</small>
                 </div>
                 <div class="form-group" v-if="parcial == true">
                   <label for="">Valor</label>
@@ -76,11 +74,8 @@
                 </div>
                 <div class="form-group" v-if="parcial == true">
                   <label for="">Porcentaje</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="plan.PorcentajeObligacion"
-                  />
+                  <!-- ant slider step -->
+                  <vue-slider v-model="plan.PorcentajeObligacion" />
                 </div>
                 <div class="form-group">
                   <label for="fecha">Mes</label>
@@ -106,9 +101,9 @@
                 type="button"
                 class="btn btn-warning text-white"
                 data-dismiss="modal"
-                @click.prevent="crearPlanMes()"
+                @click="crearPlanMes()"
               >
-                Save changes
+                Guardar
               </button>
             </div>
           </div>
@@ -143,10 +138,10 @@
           <tr>
             <th scope="col"><i class="bi bi-card-checklist"></i></th>
             <th scope="col">Obligacion</th>
-            <th scope="col">cubrir obligacio</th>
+            <th scope="col">Cubrir obligacion</th>
             <th scope="col">Porcentaje</th>
             <th scope="col">Mes</th>
-            <th scope="col">Valor obligacion</th>
+            <th scope="col">Valor Total</th>
             <th scope="col">Acciones</th>
           </tr>
         </thead>
@@ -289,21 +284,22 @@
                                 v-model="oblig.nombreObligacion"
                               />
                             </div>
-                            <!-- <div class="form-group">
-                              <label for="exampleFormControlSelect1"
+                            <div class="form-group">
+                              <label for="exampleFormControlSelect2"
                                 >Tipo de la obligacion</label
                               >
                               <select
                                 class="form-control"
-                                id="exampleFormControlSelect1"
+                                id="exampleFormControlSelect2"
                                 v-model="oblig.idTipoObligacion"
                               >
-                                <option>importante</option>
-                                <option>N/A</option>
+                                <option v-for="(item, index) in tipoObligaciones" :key="index" :value="item.id" >{{item.tipo}}</option>
+                                
                               </select>
-                            </div> -->
-                            <div class="form-group">
-                              <label for="">valor de la obligacion </label>
+                            </div>
+                            <div class="row">
+                            <div class="form-group col-12 col-md-6">
+                              <label for="">Valor total de la obligacion </label>
                               <input
                                 type="number"
                                 class="form-control"
@@ -311,9 +307,28 @@
                                 v-model="oblig.valor"
                               />
                             </div>
+                            <div class="form-group  col-12 col-md-6">
+                              <label for="">Valor de la cuota </label>
+                              <input
+                                type="number"
+                                class="form-control"
+                                placeholder=""
+                                v-model="oblig.valorCuota"
+                              />
+                            </div>
+                            </div>
+                            <div class="form-group">
+                              <label for="">Cantidad de cuotas </label>
+                              <input
+                                type="number"
+                                class="form-control"
+                                placeholder=""
+                                v-model="oblig.cuota"
+                              />
+                            </div>
                             <div class="form-group">
                               <label for="exampleFormControlSelect2"
-                                >pagos de la obligacion</label
+                                >Pagos de la obligacion</label
                               >
                               <select
                                 class="form-control"
@@ -334,9 +349,9 @@
                                 id="exampleFormControlSelect2"
                                 v-model="oblig.prioridad"
                               >
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
+                                <option value="1">1. Urgente</option>
+                                <option value="3">2. Obligatorio</option>
+                                <option value="3">3. Opcional</option>
                               </select>
                             </div>
                           </form>
@@ -345,6 +360,7 @@
                           <button
                             type="button"
                             class="btn btn-warning text-white"
+                            data-dismiss="modal"
                             @click="crearobligacion()"
                           >
                             Guardar
@@ -359,8 +375,8 @@
                     <thead>
                       <tr>
                         <th scope="col">Obligacion</th>
-                        <th scope="col">Valor</th>
-                        <!-- <th scope="col">Tipo</th> -->
+                        <th scope="col">Valor Total</th>
+                        <!-- <th scope="col">valor cuota</th> -->
                         <th scope="col">Pagos</th>
                         <th scope="col">Prioridad</th>
                         <th scope="col">Acciones</th>
@@ -459,9 +475,9 @@
                                 id="exampleFormControlSelect1"
                                 v-model="des.plazo"
                               >
-                                <option>corto</option>
-                                <option>largo</option>
-                                <option>mediano</option>
+                                <option value="corto">Corto (3-6 meses)</option>
+                                <option value="mediano">Mediano (6-12 meses)</option>
+                                <option value="largo">Largo (12-24 meses)</option>
                               </select>
                             </div>
                             <div class="form-group">
@@ -493,8 +509,9 @@
                                 id="exampleFormControlSelect2"
                                 v-model="des.prioridad"
                               >
-                                <option>1</option>
-                                <option>2</option>
+                                <option value="1">1. Urgente</option>
+                                <option value="3">2. Obligatorio</option>
+                                <option value="3">3. Opcional</option>
                               </select>
                             </div>
                           </form>
@@ -504,7 +521,7 @@
                             type="button"
                             class="btn btn-warning text-white"
                             @click="creardeseo()"
-                            aria-label="Close"
+                            data-dismiss="modal"
                           >
                             Guardar
                           </button>
@@ -756,7 +773,12 @@
 
 <script>
 import moment from "moment";
+import VueSlider from 'vue-slider-component'
+import 'vue-slider-component/theme/antd.css'
 export default {
+  components: {
+    VueSlider
+  },
   data() {
     return {
       obligaciones: [],
@@ -764,10 +786,12 @@ export default {
       oblig: {
         nombreObligacion: "",
         valor: 0,
-        /* idTipoObligacion: "", */
         pagos: "",
         documentoEmpleado: 1053837687,
         prioridad: 0,
+        valorCuota:0,
+        cuota:0,
+        idTipoObligacion:0
       },
       obligConsulta: {
         nombreObligacion: "",
@@ -787,7 +811,7 @@ export default {
       desConsulta: {
         nombreDeseo: "",
         plazo: 0,
-        valoraprox: 0,
+        valoraprox: 0,                
         TextoMitivacional: "",
         documentoEmpleado: 1053837687,
         prioridad: 0,
@@ -807,46 +831,66 @@ export default {
       cumplimientos: [],
       cumplimiento: {
         idPlanificar: "",
-        ObligacionCumplida: null,
+        ObligacionCumplida: true,
       },
       contador: 0,
       isActive1: true,
       isActive2: false,
-      consultar: false,
+      consultar: true,
+      valor:0,
+      tipoObligaciones:[],
+      totalabonos:[],
+      saldoRestante:0,
+      saldo:false
     };
   },
   mounted() {
     this.buscarempleado();
+    this.alltipoobligacion();
   },
   methods: {
+    cargarValor(idObligacion){
+      if(idObligacion != ''){
+        var index = this.obligaciones.findIndex(x => x.id == idObligacion);
+        this.valor = this.obligaciones[index].valor;
+      }
+    },
     change() {
       this.isActive1 = !this.isActive1;
       this.isActive2 = !this.isActive2;
     },
-    PagoParcial() {
+    PagoParcial(id) {
       if (this.plan.CubrirObligacion == "Parcial") {
         this.parcial = true;
+      }else{
+        this.parcial = false;
+        if(this.plan.CubrirObligacion == "Pago Completo"){
+          this.totalabnos(id)
+          console.log(id)
+          this.saldo = true
+        }
       }
     },
     crearobligacion() {
       this.axios
         .post("/obligacion-nuevo", this.oblig)
         .then((res) => {
-          console.log(res.data);
-          console.log(this.oblig);
+          //console.log(res.data);
+          //console.log(this.oblig);
           this.obligaciones.push(res.data);
           this.$swal({
             position: "top-end",
             icon: "success",
-            title: "Guardado con exito!",
+            title: "Guardado con éxito !",
           });
+          this.buscarempleado();
         })
         .catch((err) => {
           console.log(err);
           this.$swal({
             position: "toast-top-end",
             icon: "error",
-            title: "Ocurrio un error",
+            title: "Ocurrío un error",
             text: err,
           });
         });
@@ -868,7 +912,7 @@ export default {
           this.$swal({
             position: "toast-top-end",
             icon: "error",
-            title: "ocurrio un error!",
+            title: "Ocurrío un error!",
             text: err,
           });
         });
@@ -881,14 +925,14 @@ export default {
           console.log(res.data[0]);
           this.obligaciones = res.data[0];
           console.log(this.obligaciones);
-          /*        ; */
+          
         })
         .catch((err) => {
           console.log(err);
           this.$swal({
             position: "toast-top-end",
             icon: "error",
-            title: "ocurrio un error!",
+            title: "Ocurrío un error!",
             text: err,
           });
         });
@@ -911,7 +955,7 @@ export default {
           this.$swal({
             position: "top-end",
             icon: "success",
-            title: "Guardado con exito!",
+            title: "Guardado con éxito !",
           });
         })
         .catch((err) => {
@@ -919,7 +963,7 @@ export default {
           this.$swal({
             position: "top-end",
             icon: "error",
-            title: "Ocurrio un error",
+            title: "Ocurrío un error",
             text: err,
           });
         });
@@ -937,7 +981,7 @@ export default {
           this.$swal({
             position: "toast-top-end",
             icon: "error",
-            title: "ocurrio un error!",
+            title: "Ocurrío un error!",
             text: err,
           });
         });
@@ -958,7 +1002,7 @@ export default {
           this.$swal({
             position: "top-end",
             icon: "success",
-            title: "Se elimino con exito!",
+            title: "Se elimino con éxito !",
             text: err,
           });
         })
@@ -966,16 +1010,15 @@ export default {
           console.log(e);
         });
     },
-    eliminarDeseo(index) {
-      console.log(this.deseos[index].id);
+    eliminarObligacion(index) {
       this.axios
-        .delete(`/eliminarDeseo/${this.deseos[index].id}`)
+        .delete(`/eliminarobligacion/${this.obligaciones[index].id}`)
         .then((res) => {
-          this.deseos.splice(index, 1);
+          this.obligaciones.splice(index, 1);
           this.$swal({
             position: "top-end",
             icon: "success",
-            title: "Se elimino con exito!",
+            title: "Se elimino con éxito !",
             text: err,
           });
         })
@@ -986,19 +1029,28 @@ export default {
     crearPlanMes() {
       console.log(this.plan);
       console.log(this.obligaciones[0].valor);
-      if (this.plan.CubrirObligacion == "Total") {
-        this.plan.valorObligacion = this.obligaciones[0].valor;
+      for (let index = 0; index < this.obligaciones.length; index++) {
+        const element = this.obligaciones[index].valor;
+        
+      }
+      if (this.plan.CubrirObligacion == "Total cuota") {
+        this.plan.valorObligacion = this.obligaciones[0].valorCuota;
         this.plan.PorcentajeObligacion = 100;
       } else {
-        if (this.plan.valorObligacion != 0) {
-          this.plan.PorcentajeObligacion =
-            (this.plan.valorObligacion * 100) / this.obligaciones[0].valor;
-          console.log(this.plan.PorcentajeObligacion);
-        } else {
-          if (this.plan.PorcentajeObligacion != 0) {
-            this.plan.valorObligacion =
-              (this.plan.PorcentajeObligacion * this.obligaciones[0].valor) /
-              100;
+        if (this.plan.CubrirObligacion == "Pago Completo") {
+          this.plan.valorObligacion  = this.obligaciones[0].valor
+          this.plan.PorcentajeObligacion = 100
+        }else{
+          if (this.plan.valorObligacion != 0) {
+            this.plan.PorcentajeObligacion =
+              (this.plan.valorObligacion * 100) / this.obligaciones[0].valorCuota;
+            console.log(this.plan.PorcentajeObligacion);
+          } else {
+            if (this.plan.PorcentajeObligacion != 0) {
+              this.plan.valorObligacion =
+                (this.plan.PorcentajeObligacion * this.obligaciones[0].valorCuota) /
+                100;
+            }
           }
         }
       }
@@ -1012,7 +1064,7 @@ export default {
           this.$swal({
             position: "top-end",
             icon: "success",
-            title: "Guardado con exito!",
+            title: "Guardado con éxito !",
           });
         })
         .catch((err) => {
@@ -1020,7 +1072,7 @@ export default {
           this.$swal({
             position: "toast-top-end",
             icon: "error",
-            title: "Ocurrio un error",
+            title: "Ocurrío un error",
             text: err,
           });
         });
@@ -1033,6 +1085,7 @@ export default {
         .get(`/consulta-planicar/${id}`)
         .then((res) => {
           console.log(res.data[0]);
+         /*  this.consultar == true */
           this.planificarMes = res.data[0];
           for (let index = 0; index < this.planificarMes.length; index++) {
             this.planificarMes[index].mes = moment(
@@ -1041,7 +1094,7 @@ export default {
               .zone("+05:00")
               .format("DD/MM/YYYY");
           }
-          this.consultar == true
+          
           this.contadorobligacione(id);
         })
         .catch((err) => {
@@ -1049,7 +1102,7 @@ export default {
           this.$swal({
             position: "top-end",
             icon: "error",
-            title: "ocurrio un error!",
+            title: "Ocurrío un error!",
             text: err,
           });
         });
@@ -1090,7 +1143,7 @@ export default {
           this.$swal({
             position: "toast-top-end",
             icon: "error",
-            title: "Ocurrio un error",
+            title: "Ocurrío un error",
             text: err,
           });
         });
@@ -1109,11 +1162,44 @@ export default {
           this.$swal({
             position: "top-end",
             icon: "error",
-            title: "ocurrio un error!",
+            title: "Ocurrío un error!",
             text: err,
           });
         });
     },
+    alltipoobligacion(){
+      this.axios.get('/all-tipoobligacion')
+      .then((response) => {
+        this.tipoObligaciones = response.data;
+        console.log(this.tipoObligaciones)
+      })
+      .catch((e)=>{
+        console.log('error' + e);
+      })
+    },
+    totalabnos(id){
+      this.axios
+        .get(`/total-abonos/${id}`)
+        .then((res) => {
+          
+          this.totalabonos = res.data[0][0]
+          const pendiente = this.totalabonos.totalAbonos
+          this.saldoRestante = this.valor -pendiente
+          console.log(pendiente)
+          console.log(this.saldoRestante)
+          
+
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$swal({
+            position: "top-end",
+            icon: "error",
+            title: "Ocurrío un error!",
+            text: err,
+          });
+        });
+    }
   },
 };
 </script>
