@@ -142,11 +142,10 @@
             <th scope="col">Porcentaje</th>
             <th scope="col">Mes</th>
             <th scope="col">Valor Total</th>
-            <th scope="col">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in planificarMes" :key="item.id">
+          <tr v-for="(item) in planificarMes" :key="item.id">
             <th>
               <div class="form-check">
                 <input
@@ -161,25 +160,7 @@
             <td>{{ item.CubrirObligacion }}</td>
             <td>{{ item.PorcentajeObligacion }}</td>
             <td>{{ item.mes }}</td>
-            <td>{{ item.valorObligacion }}</td>
-            <td>
-              <button
-                type="button"
-                class="btn btn-danger mx-2"
-                @click.prevent="eliminarDeseo(index)"
-              >
-                Eliminar
-              </button>
-              <button
-                type="button"
-                class="btn btn-warning"
-                data-toggle="modal"
-                data-target="#exampleModaldeseoEditar"
-                @click.prevent="ActivarDeseos(index)"
-              >
-                Editar
-              </button>
-            </td>
+            <td>{{ item.valor }}</td>
           </tr>
           <tr>
             <td colspan="4" class="mx-auto" style="color: #965204">
@@ -787,7 +768,7 @@ export default {
         nombreObligacion: "",
         valor: 0,
         pagos: "",
-        documentoEmpleado: 1053837687,
+        documentoEmpleado:0,
         prioridad: 0,
         valorCuota:0,
         cuota:0,
@@ -805,7 +786,7 @@ export default {
         plazo: 0,
         valoraprox: 0,
         TextoMitivacional: "",
-        documentoEmpleado: 1053837687,
+        documentoEmpleado:0,
         prioridad: 0,
       },
       desConsulta: {
@@ -813,7 +794,7 @@ export default {
         plazo: 0,
         valoraprox: 0,                
         TextoMitivacional: "",
-        documentoEmpleado: 1053837687,
+        documentoEmpleado:0,
         prioridad: 0,
       },
       empleado: 0,
@@ -877,13 +858,14 @@ export default {
         .then((res) => {
           //console.log(res.data);
           //console.log(this.oblig);
+          this.oblig.documentoEmpleado = this.empleado
           this.obligaciones.push(res.data);
           this.$swal({
             position: "top-end",
             icon: "success",
             title: "Guardado con éxito !",
           });
-          this.buscarempleado();
+           this.buscarempleado();
         })
         .catch((err) => {
           console.log(err);
@@ -900,8 +882,6 @@ export default {
       this.axios
         .get(`/empleado/${id}`)
         .then((res) => {
-          //console.log(res.data[0]);
-          //console.log(res.data[0][0].documentoEmpleado);
           this.empleado = res.data[0][0].documentoEmpleado;
           console.log(this.empleado);
           this.buscarObligacion(this.empleado);
@@ -944,11 +924,13 @@ export default {
       /* this.obligConsulta.idTipoObligacion = this.obligaciones[index].idTipoObligacion; */
       this.obligConsulta.pagos = this.obligaciones[index].pagos;
       this.obligConsulta.prioridad = this.obligaciones[index].prioridad;
+      
     },
     creardeseo() {
       this.axios
         .post("/deseo-nuevo", this.des)
         .then((res) => {
+          this.des.documentoEmpleado = this.empleado
           console.log(res.data);
           console.log(this.des);
           this.deseos.push(res.data);
@@ -992,6 +974,7 @@ export default {
       this.desConsulta.valoraprox = this.deseos[index].valoraprox;
       this.desConsulta.TextoMitivacional = this.deseos[index].TextoMitivacional;
       this.desConsulta.prioridad = this.deseos[index].prioridad;
+      this.desConsulta.documentoEmpleado = this.empleado
     },
     eliminarDeseo(index) {
       console.log(this.deseos[index].id);
