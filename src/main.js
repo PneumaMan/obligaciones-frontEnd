@@ -19,7 +19,7 @@ Vue.use(BootstrapVue)
 Vue.use(VueAxios, axios)
 
  //const url = 'https://obligaciones-app.azurewebsites.net/api'
- const url = 'https://exploradorarchivos.azurewebsites.net/api'
+ const url = 'https://deseos-backend.azurewebsites.net/api'
 /* const url = 'http://localhost:3000/api' */
 
 axios.defaults.baseURL = url 
